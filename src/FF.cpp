@@ -8,7 +8,7 @@ using namespace std;
 vector<int> items;
 int n, c;
 
-int Greedy(){
+int first_fit(){
 	vector<int> bins;
 	for (int i = 0; i < n; ++i){
 		int j;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	file.close();
 
 	clock_t start = clock();
-	cout << Greedy() << endl;
+	cout << first_fit() << endl;
 	clock_t end = clock();
 	//cout << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << endl;
 	cout << fixed << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << endl;
