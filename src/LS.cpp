@@ -7,9 +7,9 @@ int local_search(){
 	Data data(n, c, items);
 	Result current;
 	current.create_random_result(current, data);
-	cout << current.get_bins_count() << endl;
+	cout << "random_FF: " << current.get_bins_count() << endl;
 	int i = 100;
-	while (i--){ // i--
+	while (true){ // i--
 		Range neighbor_range = current.get_neighbor_range(data);
 		cout << "num of range: " << neighbor_range.neighbors.size() << endl;
 		Result best_neighbor;

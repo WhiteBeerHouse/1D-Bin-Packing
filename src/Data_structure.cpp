@@ -1,7 +1,5 @@
 #include "Data_structure.h"
 
-#define MAX 100
-
 Result::Result(){
 	bins_count = 0;
 	/**record = new int [data.n];
@@ -46,7 +44,7 @@ Result Result::move(int item, int tar_bin){
 bool Result::swap(int item1, int item2, Result & res){
 	if (item1 == item2)	return false;
 	res = *this;
-	int bin1, bin2;
+	int bin1 = 0, bin2 = 0;
 	for (int i = 0; i < bins_count; ++i){
 		if (record[item1][i] == 1)	bin1 = i;
 		if (record[item2][i] == 1)	bin2 = i;
@@ -94,7 +92,7 @@ void Result::create_random_result(Result & res, Data data){
 	record.resize(data.n);
 	srand((unsigned)time(NULL));
 	for (int i = 0; i < data.n; ++i){
-		record[i].resize(MAX);
+		record[i].resize(data.n);
 		int j = 0;
 		for (; j < res.bins_count; ++j){
 			record[i][j] = 0;
@@ -112,6 +110,8 @@ void Result::create_random_result(Result & res, Data data){
 		if (j == res.bins_weight.size()){
 			res.bins_weight.push_back(data.c - data.items[i]);
 			++res.bins_count;
+			if (j > record[i].size())
+				record[i].resize(j);
 			record[i][j] = 1;
 		}
 	}
