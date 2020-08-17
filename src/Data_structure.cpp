@@ -1,5 +1,7 @@
 #include "Data_structure.h"
 
+#define MAX 100
+
 Result::Result(){
 	bins_count = 0;
 	/**record = new int [data.n];
@@ -12,11 +14,14 @@ Result::Result(){
 }
 
 Result::~Result(){
-	/*bins_weight.clear();
+	bins_weight.clear();
 	vector<int>().swap(bins_weight);
-	for (int i = 0; i < data.n; ++i)
-		delete record[i];
-	delete record;*/
+	for (int i = 0; i < record.size(); ++i){
+		record[i].clear();
+		vector<int>().swap(record[i]);
+	}
+	record.clear();
+	vector<vector<int>>().swap(record);
 }
 
 //Result::Result(int bins_count0, vector<int> bins_weight0) : bins_count(bins_count0), bins_weight(bins_weight0){}
@@ -29,8 +34,8 @@ Result Result::move(int item, int tar_bin){
 		if (record[item][i] == 1)
 			break;
 	}
-	res.bins_weight[i] += item;
-	res.bins_weight[tar_bin] -= item;
+	res.bins_weight[i] += data.items[item];
+	res.bins_weight[tar_bin] -= data.items[item];
 	if (res.bins_weight[i] == data.c){
 		--bins_count;
 		record[item][i] = 0;
@@ -38,23 +43,48 @@ Result Result::move(int item, int tar_bin){
 	return res;
 }
 
+bool Result::swap(int item1, int item2, Result & res){
+	if (item1 == item2)	return false;
+	res = *this;
+	int bin1, bin2;
+	for (int i = 0; i < bins_count; ++i){
+		if (record[item1][i] == 1)	bin1 = i;
+		if (record[item2][i] == 1)	bin2 = i;
+	}
+	if (bin1 == bin2)	return false;
+	if (data.items[item1] == data.items[item2])	return false;
+	if (data.items[item1] > res.bins_weight[bin2] + data.items[item2] || data.items[item2] > res.bins_weight[bin1] + data.items[item1])	return false;
+	record[item1][bin1] = record[item2][bin2] = 0;
+	record[item1][bin2] = record[item2][bin1] = 1;
+	res.bins_weight[bin1] = res.bins_weight[bin1] + data.items[item1] - data.items[item2];
+	res.bins_weight[bin2] = res.bins_weight[bin2] + data.items[item2] - data.items[item1];
+	return true;
+}
+
 Range Result::get_neighbor_range(Data data){
 	Range range;
-	int count = 0;
+	//int count = 0;
 	bool flag = true;
 	for (int i = 0; i < data.items.size(); ++i){
-		for (int j = 0; j < this->bins_count; ++j){
-			if (data.items[i] <= this->bins_weight[j]){
-				Result temp = this->move(i, j);
-				if (temp.better(this)){
+		for (int j = 0; j < bins_count; ++j){
+			if (data.items[i] <= bins_weight[j]){
+				Result temp = move(i, j);// judge?
+				if (temp.bins_count < bins_count){
 					flag = false;
 				}
 				range.neighbors.push_back(temp);//
 			}			
 		}
 	}
-	if (flag){
 
+	if (flag){
+		for (int i = 0; i < data.items.size(); ++i){
+			for (int j = 0; j < data.items.size(); ++j){
+				Result temp;
+				if (swap(i, j, temp))
+					range.neighbors.push_back(temp);
+			}
+		}
 	}
 	return range;
 }
@@ -64,7 +94,7 @@ void Result::create_random_result(Result & res, Data data){
 	record.resize(data.n);
 	srand((unsigned)time(NULL));
 	for (int i = 0; i < data.n; ++i){
-		record[i].resize(data.n);
+		record[i].resize(MAX);
 		int j = 0;
 		for (; j < res.bins_count; ++j){
 			record[i][j] = 0;
@@ -89,7 +119,9 @@ void Result::create_random_result(Result & res, Data data){
 }
 
 bool Result::better(Result* res){
-	if (this->bins_count < res->bins_count)	return true; //{cout << "c_better" << endl; return true;}
+	if (this->bins_count < res->bins_count)	
+		return true; 
+		//{cout << "c_better" << endl; return true;}
 	else if (this->bins_count > res->bins_count)	return false;
 
 	vector<int> bins1 = this->bins_weight;
@@ -98,7 +130,9 @@ bool Result::better(Result* res){
 	sort(bins2.begin(), bins2.end());
 
 	for (int i = 0; i < bins1.size(); ++i){
-		if (bins1[i] < bins2[i])	return true; //{cout << "b_better" << endl; return true;}
+		if (bins1[i] < bins2[i])	
+			return true; 
+			//{cout << "b_better" << endl; return true;}
 		else return false;
 	}
 }

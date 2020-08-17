@@ -24,13 +24,14 @@ class Result{
 public:
 	Result();
 	~Result();
-	//Result(int bins_count0, vector<int> bins_weight0);
+		//Result(int bins_count0, vector<int> bins_weight0);
 	Range get_neighbor_range(Data data);
 	void create_random_result(Result & res, Data data);
 	Result move(int item, int tar_bin);
-	//bool movable(int item, int tar_bin);
+	bool swap(int item1, int item2, Result & res);
+		//bool movable(int item, int tar_bin);
 	bool better(Result* res);
-	//bool better(Result res1, Result res2);
+		//bool better(Result res1, Result res2);
 	Result& operator = (const Result& res);
 	int get_bins_count();
 
