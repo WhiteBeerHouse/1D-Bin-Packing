@@ -21,7 +21,7 @@ int first_fit(){
 		//if no opened bin satisfies
 		//allocate a new bin
 		if (j == bins.size()){
-			bins.push_back(c-items[i]);
+			bins.push_back(c - items[i]);
 		}		
 	}
 	return bins.size();
