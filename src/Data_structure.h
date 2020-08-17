@@ -30,7 +30,7 @@ public:
 	Result move(int item, int tar_bin);
 	//bool movable(int item, int tar_bin);
 	bool better(Result* res);
-	bool better(Result res1, Result res2);
+	//bool better(Result res1, Result res2);
 	Result& operator = (const Result& res);
 	int get_bins_count();
 

@@ -8,8 +8,11 @@ int local_search(){
 	Result current;
 	current.create_random_result(current, data);
 	cout << current.get_bins_count() << endl;
-	/*while (true){
+	//int i = 100;
+	while (true){ // i--
+		//cout << "loop" << endl;
 		Range neighbor_range = current.get_neighbor_range(data);
+		cout << "num of range: " << neighbor_range.neighbors.size() << endl;
 		Result best_neighbor;
 		while (!neighbor_range.empty()){
 			Result neighbor = neighbor_range.next();
@@ -22,7 +25,7 @@ int local_search(){
 			current = best_neighbor;
 		else
 			return current.get_bins_count();
-	}*/
+	}/**/
 	return 0;
 
 	/**
