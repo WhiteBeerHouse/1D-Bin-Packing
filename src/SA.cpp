@@ -13,18 +13,33 @@ vector<int> items;
 int n, c;
 
 Result generate_new(Result current){
+	/*Result res = current;
+	int item, bin;
+	for (int i = 0; i < SWAP_TIMES; ++i){
+		while (true){
+			item = rand() % n;
+			bin = rand() % res.get_bins_count();
+			//cout << "bin: " << bin << endl;
+			if (items[item] <= res.bins_weight[bin]){
+				res = res.move(item, bin);
+				break;
+			}
+		}
+	}
+	return res;*/
+
 	Result res;
 	int item1 = 0, item2 = 0;
-	srand((unsigned)time(NULL));
-	for (int i = 0; i < SWAP_TIMES; ++i){
+	//for (int i = 0; i < SWAP_TIMES; ++i){
 		while (true){
 			item1 = rand() % n;
 			item2 = rand() % n;
+			//cout << "item1: " << item1 << " item2: " << item2 << endl;
 			if (current.swap(item1, item2, res))
 				break;			
 		}
-	}
-	return res;
+	//}
+	return res;/**/
 }
 
 double difference_calculator(Result New, Result Old){
@@ -37,10 +52,10 @@ double difference_calculator(Result New, Result Old){
 	sort(bins2.begin(), bins2.end());
 
 	for (int i = 0; i < bins1.size(); ++i){
-		if (bins1[i] > bins2[i])
-			return ((bins1[i] - bins2[i]) % 10) / (double)10;
-		else if (bins1[i] < bins2[i])
-			return -(((bins2[i] - bins1[i]) % 10) / (double)10);
+		if (bins1[i] < bins2[i])
+			return ((bins1[i] - bins2[i]) % 100) / (double)100;
+		else if (bins1[i] > bins2[i])
+			return -(((bins2[i] - bins1[i]) % 100) / (double)100);
 	}
 	return 0;
 }
