@@ -28,17 +28,17 @@ Result generate_new(Result current){
 	}
 	return res;*/
 
-	Result res;
+	Result res = current;
 	int item1 = 0, item2 = 0;
-	//for (int i = 0; i < SWAP_TIMES; ++i){
+	for (int i = 0; i < SWAP_TIMES; ++i){
 		while (true){
 			item1 = rand() % n;
 			item2 = rand() % n;
 			//cout << "item1: " << item1 << " item2: " << item2 << endl;
-			if (current.swap(item1, item2, res))
+			if (res.swap(item1, item2, res))
 				break;			
 		}
-	//}
+	}
 	return res;/**/
 }
 
@@ -52,10 +52,10 @@ double difference_calculator(Result New, Result Old){
 	sort(bins2.begin(), bins2.end());
 
 	for (int i = 0; i < bins1.size(); ++i){
-		if (bins1[i] < bins2[i])
-			return ((bins1[i] - bins2[i]) % 100) / (double)100;
-		else if (bins1[i] > bins2[i])
-			return -(((bins2[i] - bins1[i]) % 100) / (double)100);
+		if (bins1[i] > bins2[i])
+			return ((bins1[i] - bins2[i]) % 10) / (double)10;
+		else if (bins1[i] < bins2[i])
+			return -(((bins2[i] - bins1[i]) % 10) / (double)10);
 	}
 	return 0;
 }
@@ -70,8 +70,15 @@ int simulated_annealing(){
 	srand((unsigned)time(NULL));
 	int count = CONDITION;
 
-	while (current_T > T_MIN && count > 0){
-		Range neighbor_range = current.get_neighbor_range(data);
+	while (current_T > T_MIN && count > 0){//cout << "count: " << count << '\t';
+		Range neighbor_range;
+		do{
+			neighbor_range = current.get_neighbor_range(data);
+		} while(neighbor_range.neighbors.size() == 0);
+		/*while (neighbor_range.neighbors.size() == 0){
+			neighbor_range = current.get_neighbor_range(data);
+		}*/
+
 		for (int i = 0; i < L; ++i){
 			int random_index = rand() % (neighbor_range.neighbors.size());
 			Result neighbor = neighbor_range.neighbors[random_index];

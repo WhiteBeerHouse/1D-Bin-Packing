@@ -74,7 +74,7 @@ Range Result::get_neighbor_range(Data data){
 		}
 	}
 
-	if (flag){
+	/*if (flag){
 		for (int i = 0; i < data.items.size(); ++i){
 			for (int j = 0; j < data.items.size(); ++j){
 				Result temp;
@@ -82,7 +82,7 @@ Range Result::get_neighbor_range(Data data){
 					range.neighbors.push_back(temp);
 			}
 		}
-	}
+	}*/
 	return range;
 }
 
