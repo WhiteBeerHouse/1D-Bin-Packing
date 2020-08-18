@@ -1,9 +1,12 @@
 
-LS: LS.o Data_structure.o
-	${CXX} -g $^ -o $@
+#LS: LS.o Data_structure.o
+	#${CXX} -g $^ -o $@
+
+SA: SA.o Data_structure.o
+	${CXX} -g $^ -o $@	
 
 %.o: %.cpp
 	${CXX} -g -o $@ -c $^
 
 clean :
-	rm -f LS *.o 
+	rm -f LS SA *.o 

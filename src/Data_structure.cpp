@@ -61,7 +61,6 @@ bool Result::swap(int item1, int item2, Result & res){
 
 Range Result::get_neighbor_range(Data data){
 	Range range;
-	//int count = 0;
 	bool flag = true;
 	for (int i = 0; i < data.items.size(); ++i){
 		for (int j = 0; j < bins_count; ++j){
@@ -85,6 +84,51 @@ Range Result::get_neighbor_range(Data data){
 		}
 	}
 	return range;
+}
+
+void Result::create_result(Result & res, Data data){
+	//NF
+	//Not correct
+	/*res.data = data;
+	record.resize(data.n);
+	res.bins_weight.resize(data.n);
+	for (int i = 0; i < data.n; ++i){
+		record[i].resize(data.n);
+		if (data.items[i] <= res.bins_weight[res.bins_count])
+			res.bins_weight[res.bins_count] =data.c - res.bins_weight[res.bins_count] - data.items[i];
+		else {
+			res.bins_weight.push_back(data.c - data.items[i]);
+			++res.bins_count;
+			if (res.bins_weight.size() > record[i].size())
+				record[i].resize(res.bins_weight.size());
+			record[i][res.bins_weight.size()] = 1;
+		}
+	}
+	return;*/
+	//FF
+	res.data = data;
+	record.resize(data.n);
+	for (int i = 0; i < data.n; ++i){
+		record[i].resize(data.n);
+		int j = 0;
+		for (; j < res.bins_count; ++j){
+			record[i][j] = 0;
+			if (data.items[i] <= res.bins_weight[j]){
+				res.bins_weight[j] -= data.items[i];
+				record[i][j] = 1;
+				break;	
+			}
+		}
+		//if no opened bin satisfies, allocate a new bin
+		if (j == res.bins_weight.size()){
+			res.bins_weight.push_back(data.c - data.items[i]);
+			++res.bins_count;
+			if (j > record[i].size())
+				record[i].resize(j);
+			record[i][j] = 1;
+		}
+	}
+	return;
 }
 
 void Result::create_random_result(Result & res, Data data){
@@ -119,9 +163,7 @@ void Result::create_random_result(Result & res, Data data){
 }
 
 bool Result::better(Result* res){
-	if (this->bins_count < res->bins_count)	
-		return true; 
-		//{cout << "c_better" << endl; return true;}
+	if (this->bins_count < res->bins_count)	return true;
 	else if (this->bins_count > res->bins_count)	return false;
 
 	vector<int> bins1 = this->bins_weight;
@@ -130,9 +172,7 @@ bool Result::better(Result* res){
 	sort(bins2.begin(), bins2.end());
 
 	for (int i = 0; i < bins1.size(); ++i){
-		if (bins1[i] < bins2[i])	
-			return true; 
-			//{cout << "b_better" << endl; return true;}
+		if (bins1[i] < bins2[i])	return true;
 		else return false;
 	}
 }

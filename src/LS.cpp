@@ -3,21 +3,19 @@
 vector<int> items;
 int n, c;
 
-int local_search(){
+int hill_climbing(){
 	Data data(n, c, items);
 	Result current;
 	current.create_random_result(current, data);
-	cout << "random_FF: " << current.get_bins_count() << endl;
-	int i = 100;
-	while (true){ // i--
+	//cout << "random_FF: " << current.get_bins_count() << endl;
+	while (true){
 		Range neighbor_range = current.get_neighbor_range(data);
-		cout << "num of range: " << neighbor_range.neighbors.size() << endl;
+		//cout << "num of range: " << neighbor_range.neighbors.size() << endl;
 		Result best_neighbor;
 		while (!neighbor_range.empty()){
 			Result neighbor = neighbor_range.next();
-			if (best_neighbor.get_bins_count() == 0 || neighbor.better(&best_neighbor)){
+			if (best_neighbor.get_bins_count() == 0 || neighbor.better(&best_neighbor))
 				best_neighbor = neighbor;
-			}
 		}
 
 		if (best_neighbor.get_bins_count() != 0 && best_neighbor.better(&current))
@@ -38,7 +36,7 @@ int main(int argc, char* argv[]) {
 	file.close();
 
 	clock_t start = clock();
-	cout << local_search() << endl;
+	cout << hill_climbing() << endl;
 	clock_t end = clock();
 	cout << fixed << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << endl;
 	return 0;
