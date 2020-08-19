@@ -2,13 +2,7 @@
 
 Result::Result(){
 	bins_count = 0;
-	/**record = new int [data.n];
-	for (int i = 0; i < data.n; ++i){
-		for (int j = 0; j < data.n; ++j){
-			record[i][j] = 0;
-		}
-	}
-	record = 0;*/
+	swap_record[0] = swap_record[1] = 0;
 }
 
 Result::~Result(){
@@ -42,16 +36,16 @@ Result Result::move(int item, int tar_bin){
 }
 
 bool Result::swap(int item1, int item2, Result & res){
-	if (item1 == item2)	return false;
+	if (item1 == item2 || data.items[item1] == data.items[item2])	return false;
 	res = *this;
 	int bin1 = 0, bin2 = 0;
 	for (int i = 0; i < bins_count; ++i){
 		if (record[item1][i] == 1)	bin1 = i;
 		if (record[item2][i] == 1)	bin2 = i;
+		if (bin1 && bin2) break;
 	}
 	if (bin1 == bin2)	return false;
-	if (data.items[item1] == data.items[item2])	return false;
-	if (data.items[item1] > res.bins_weight[bin2] + data.items[item2] || data.items[item2] > res.bins_weight[bin1] + data.items[item1])	return false;
+	if ((data.items[item1] > res.bins_weight[bin2] + data.items[item2]) || (data.items[item2] > res.bins_weight[bin1] + data.items[item1]))	return false;
 	record[item1][bin1] = record[item2][bin2] = 0;
 	record[item1][bin2] = record[item2][bin1] = 1;
 	res.bins_weight[bin1] = res.bins_weight[bin1] + data.items[item1] - data.items[item2];
@@ -65,46 +59,89 @@ Range Result::get_neighbor_range(Data data){
 	for (int i = 0; i < data.items.size(); ++i){
 		for (int j = 0; j < bins_count; ++j){
 			if (data.items[i] <= bins_weight[j]){
-				Result temp = move(i, j);// judge?
+				Result temp = move(i, j);
 				if (temp.bins_count < bins_count){
 					flag = false;
 				}
-				range.neighbors.push_back(temp);//
+				range.neighbors.push_back(temp);
 			}			
 		}
 	}
 
-	/*if (flag){
+	if (flag){
 		for (int i = 0; i < data.items.size(); ++i){
-			for (int j = 0; j < data.items.size(); ++j){
+			for (int j = i + 1; j < data.items.size(); ++j){
 				Result temp;
 				if (swap(i, j, temp))
 					range.neighbors.push_back(temp);
 			}
 		}
-	}*/
+	}
+	return range;
+}
+
+Range Result::get_neighbor_range_move(Data data){
+	Range range;
+	for (int i = 0; i < data.items.size(); ++i){
+		for (int j = 0; j < bins_count; ++j){
+			if (data.items[i] <= bins_weight[j]){
+				Result temp = move(i, j);
+				range.neighbors.push_back(temp);
+			}			
+		}
+	}
+	return range;
+}
+
+Range Result::get_neighbor_range_random_move(int times, Data data){
+	Range range;
+	int item = 0, bin = 0;
+	for (int i = 0; i < times; ++i){
+		//while (true){
+			item = rand() % data.items.size();
+			bin = rand() % data.items.size();
+			if (data.items[item] <= bins_weight[bin]){
+				Result temp = move(item, bin);
+				range.neighbors.push_back(temp);
+				//break;
+			}
+			//cout << "item1: " << item1 << " item2: " << item2 << endl;		
+		//}
+	}
+	return range;
+}
+
+Range Result::get_neighbor_range_swap(int flag, Data data){
+	Range range;	
+	for (int i = 0; i < data.items.size(); ++i){
+		for (int j = i + 1; j < data.items.size(); ++j){
+			Result temp;
+			if (swap(i, j, temp)){
+				if (flag){
+					swap_record[0] = i > j ? i : j;
+					swap_record[1] = i < j ? i : j;
+				}
+				range.neighbors.push_back(temp);
+			}
+		}
+	}	
+	return range;
+}
+
+Range Result::get_neighbor_range_random_swap(int times, Data data){
+	Range range;
+	int item1 = 0, item2 = 0;
+	for (int i = 0; i < times; ++i){
+		item1 = rand() % data.items.size();
+		item2 = rand() % data.items.size();
+		Result temp;
+		if (swap(item1, item2, temp))
+			range.neighbors.push_back(temp);
+	}	
 	return range;
 }
 
 void Result::create_result(Result & res, Data data){
-	//NF
-	//Not correct
-	/*res.data = data;
-	record.resize(data.n);
-	res.bins_weight.resize(data.n);
-	for (int i = 0; i < data.n; ++i){
-		record[i].resize(data.n);
-		if (data.items[i] <= res.bins_weight[res.bins_count])
-			res.bins_weight[res.bins_count] =data.c - res.bins_weight[res.bins_count] - data.items[i];
-		else {
-			res.bins_weight.push_back(data.c - data.items[i]);
-			++res.bins_count;
-			if (res.bins_weight.size() > record[i].size())
-				record[i].resize(res.bins_weight.size());
-			record[i][res.bins_weight.size()] = 1;
-		}
-	}
-	return;*/
 	//FF
 	res.data = data;
 	record.resize(data.n);
@@ -199,7 +236,11 @@ Result& Result::operator = (const Result& res){
 	this->data = res.data;
 }
 
-int Result:: get_bins_count(){
+bool Result::is_null(){
+	return this->bins_count == 0;
+}
+
+int Result::get_bins_count(){
 	return bins_count;
 }
 

@@ -25,9 +25,14 @@ public:
 	Result();
 	~Result();
 	Range get_neighbor_range(Data data);
+	Range get_neighbor_range_move(Data data);
+	Range get_neighbor_range_swap(int flag, Data data);//bad
+	Range get_neighbor_range_random_move(int times, Data data);//not tested
+	Range get_neighbor_range_random_swap(int times, Data data);//worst
 	void create_result(Result & res, Data data);
 	void create_random_result(Result & res, Data data);
 	Result move(int item, int tar_bin);
+	bool is_null();
 	bool swap(int item1, int item2, Result & res);
 	bool better(Result* res);
 	Result& operator = (const Result& res);
@@ -38,7 +43,8 @@ public:
 	vector<vector<int>> record;
 	int bins_count;
 	vector<int> bins_weight;
-
+	//vector<pair<int, int>> swap_record;
+	int swap_record[2];
 };
 
 class Range{

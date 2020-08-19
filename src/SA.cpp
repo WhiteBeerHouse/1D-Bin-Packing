@@ -5,42 +5,12 @@
 #define r 0.97
 #define T 500
 #define T_MIN 1
-#define L 50
+#define L 100
 #define SWAP_TIMES 20
-#define CONDITION 100
+#define CONDITION 200
 
 vector<int> items;
 int n, c;
-
-Result generate_new(Result current){
-	/*Result res = current;
-	int item, bin;
-	for (int i = 0; i < SWAP_TIMES; ++i){
-		while (true){
-			item = rand() % n;
-			bin = rand() % res.get_bins_count();
-			//cout << "bin: " << bin << endl;
-			if (items[item] <= res.bins_weight[bin]){
-				res = res.move(item, bin);
-				break;
-			}
-		}
-	}
-	return res;*/
-
-	Result res = current;
-	int item1 = 0, item2 = 0;
-	for (int i = 0; i < SWAP_TIMES; ++i){
-		while (true){
-			item1 = rand() % n;
-			item2 = rand() % n;
-			//cout << "item1: " << item1 << " item2: " << item2 << endl;
-			if (res.swap(item1, item2, res))
-				break;			
-		}
-	}
-	return res;/**/
-}
 
 double difference_calculator(Result New, Result Old){
 	if (New.bins_count != Old.bins_count)	
@@ -70,21 +40,16 @@ int simulated_annealing(){
 	srand((unsigned)time(NULL));
 	int count = CONDITION;
 
-	while (current_T > T_MIN && count > 0){//cout << "count: " << count << '\t';
+	while (current_T > T_MIN && count > 0){
 		Range neighbor_range;
 		do{
-			neighbor_range = current.get_neighbor_range(data);
+			neighbor_range = current.get_neighbor_range_move(data);
 		} while(neighbor_range.neighbors.size() == 0);
-		/*while (neighbor_range.neighbors.size() == 0){
-			neighbor_range = current.get_neighbor_range(data);
-		}*/
 
 		for (int i = 0; i < L; ++i){
 			int random_index = rand() % (neighbor_range.neighbors.size());
 			Result neighbor = neighbor_range.neighbors[random_index];
-			//Result neighbor = generate_new(current);
 			double diff = difference_calculator(neighbor, current);
-			//cout << diff << " ";
 
 			if (diff == 0)	--count;
 			else count = CONDITION;
@@ -99,36 +64,6 @@ int simulated_annealing(){
 		current_T *= r;
 	}
 	return current.get_bins_count();
-	/*Data data(n, c, items);
-	Result init_result;
-	init_result.create_result(init_result, data);
-	int best = init_result.get_bins_count();
-	cout << "random_FF: " << best << endl;
-
-	double current_T = T;
-	srand((unsigned)time(NULL));
-	int count = CONDITION;
-	while (current_T > T_MIN && count > 0){
-		for (int i = 0; i < L; ++i){
-			Result new_res;
-			new_res = generate_new(init_result);
-			int temp = new_res.get_bins_count();
-			int diff = temp - best;
-			//cout << diff << " ";
-
-			if (diff == 0)	--count;
-			else count = CONDITION;
-
-			if (diff < 0)
-				best = temp;
-			else {
-				if (exp(-diff / (k * current_T)) > (rand() % 100) / (double)100)
-					best = temp;
-			}
-		}
-		current_T *= r;
-	}
-	return best;*/
 }
 
 int main(int argc, char* argv[]) {
