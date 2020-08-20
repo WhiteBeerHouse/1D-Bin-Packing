@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <deque>
 #include <algorithm>
 #include <stdlib.h>
 #include <time.h>
@@ -26,10 +27,10 @@ public:
 	~Result();
 	Range get_neighbor_range(Data data);
 	Range get_neighbor_range_move(Data data);
-	Range get_neighbor_range_swap(int flag, Data data);//bad
+	Range get_neighbor_range_swap(bool flag, Data data);//bad
 	Range get_neighbor_range_random_move(int times, Data data);//not tested
 	Range get_neighbor_range_random_swap(int times, Data data);//worst
-	void create_result(Result & res, Data data);
+	void create_result(bool flag, Result & res, Data data, int pos1, int pos2);
 	void create_random_result(Result & res, Data data);
 	Result move(int item, int tar_bin);
 	bool is_null();
@@ -43,7 +44,7 @@ public:
 	vector<vector<int>> record;
 	int bins_count;
 	vector<int> bins_weight;
-	//vector<pair<int, int>> swap_record;
+	vector<int> items_order;
 	int swap_record[2];
 };
 

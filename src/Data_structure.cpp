@@ -16,9 +16,6 @@ Result::~Result(){
 	vector<vector<int>>().swap(record);
 }
 
-//Result::Result(int bins_count0, vector<int> bins_weight0) : bins_count(bins_count0), bins_weight(bins_weight0){}
-
-
 Result Result::move(int item, int tar_bin){
 	Result res = *this;
 	int i = 0;
@@ -111,7 +108,7 @@ Range Result::get_neighbor_range_random_move(int times, Data data){
 	return range;
 }
 
-Range Result::get_neighbor_range_swap(int flag, Data data){
+Range Result::get_neighbor_range_swap(bool flag, Data data){
 	Range range;	
 	for (int i = 0; i < data.items.size(); ++i){
 		for (int j = i + 1; j < data.items.size(); ++j){
@@ -141,7 +138,7 @@ Range Result::get_neighbor_range_random_swap(int times, Data data){
 	return range;
 }
 
-void Result::create_result(Result & res, Data data){
+void Result::create_result(bool flag, Result & res, Data data, int pos1, int pos2){
 	//FF
 	res.data = data;
 	record.resize(data.n);
@@ -153,6 +150,11 @@ void Result::create_result(Result & res, Data data){
 			if (data.items[i] <= res.bins_weight[j]){
 				res.bins_weight[j] -= data.items[i];
 				record[i][j] = 1;
+				res.items_order.push_back(data.items[i]);
+				if (flag){
+					swap_record[0] = pos2;
+					swap_record[1] = pos1;
+				}
 				break;	
 			}
 		}
@@ -163,6 +165,7 @@ void Result::create_result(Result & res, Data data){
 			if (j > record[i].size())
 				record[i].resize(j);
 			record[i][j] = 1;
+			res.items_order.push_back(data.items[i]);
 		}
 	}
 	return;
@@ -178,11 +181,10 @@ void Result::create_random_result(Result & res, Data data){
 		for (; j < res.bins_count; ++j){
 			record[i][j] = 0;
 			if (data.items[i] <= res.bins_weight[j]){
-				double rand_factor = (rand() % 100) / (double)100;
-				//cout << "rand: " << rand_factor << endl;
-				if (rand_factor > 0.3){
+				if ((rand() % 100) / (double)100 > 0.3){
 					res.bins_weight[j] -= data.items[i];
 					record[i][j] = 1;
+					res.items_order.push_back(data.items[i]);
 					break;
 				}			
 			}
@@ -194,6 +196,7 @@ void Result::create_random_result(Result & res, Data data){
 			if (j > record[i].size())
 				record[i].resize(j);
 			record[i][j] = 1;
+			res.items_order.push_back(data.items[i]);
 		}
 	}
 	return;
@@ -230,10 +233,13 @@ bool Result::better(Result* res){
 }*/
 
 Result& Result::operator = (const Result& res){
+	this->data = res.data;
 	this->record = res.record;
 	this->bins_count = res.bins_count;
 	this->bins_weight = res.bins_weight;
-	this->data = res.data;
+	this->items_order = res.items_order;
+	this->swap_record[0] = res.swap_record[0];
+	this->swap_record[1] = res.swap_record[1];
 }
 
 bool Result::is_null(){
