@@ -10,8 +10,8 @@ void swap_items_and_get_order(int pos1, int pos2, vector<int>& origin_order){
 	return;
 }
 
-vector<Result> get_neighbor_range(vector<int> items_order){
-	vector<Result> neighbor_range;
+deque<Result> get_neighbor_range(vector<int> items_order){
+	deque<Result> neighbor_range;
 	for (int i = 0; i < items_order.size(); ++i){
 		for (int j = i + 1; j < items_order.size(); ++j){
 			Result res;
@@ -32,9 +32,9 @@ int hill_climbing(){
 
 	Result best = current;
 	while (true){
-		vector<Result> neighbor_range = get_neighbor_range(current.items_order);
+		deque<Result> neighbor_range = get_neighbor_range(current.items_order);
 		for (int i = 0; i < neighbor_range.size(); ++i){
-			if (neighbor_range[i].better(current))
+			if (neighbor_range.at(i).better(current))
 				current = neighbor_range[i];
 		}
 		if (current.better(best))
@@ -47,6 +47,10 @@ int hill_climbing(){
 int main(int argc, char* argv[]) {
 	ifstream file;
 	file.open(argv[1]);
+	if (!file.is_open()){
+		perror("Error");
+		return(-1);
+	}
 	file >> n >> c;
 	items.resize(n);
 	for (int i = 0; i < n; ++i) {
@@ -55,8 +59,8 @@ int main(int argc, char* argv[]) {
 	file.close();
 
 	clock_t start = clock();
-	int s = hill_climbing();
-	cout << "Solution by local-search: " << s << endl;
+	int solution = hill_climbing();
+	cout << "Solution by local-search: " << solution << endl;
 	clock_t end = clock();
 	cout << fixed << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << endl;
 	return 0;

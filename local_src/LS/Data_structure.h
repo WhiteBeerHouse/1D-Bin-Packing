@@ -27,9 +27,7 @@ public:
 	~Result();
 	void create_result(bool flag, Result & res, const Data & data, int pos1, int pos2);
 	void create_random_result(Result & res, const Data & data);
-	Result move(int item, int tar_bin);
 	bool is_null();
-	bool swap(int item1, int item2, Result & res);
 	bool better(const Result & res);
 	Result& operator = (const Result & res);
 	int get_bins_count();
@@ -38,7 +36,6 @@ public:
 
 private:
 	Data data;
-	vector<vector<int>> record;
 	int bins_count;
 	vector<int> bins_weight;
 	int swap_record[2];
