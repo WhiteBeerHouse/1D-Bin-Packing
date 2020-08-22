@@ -1,11 +1,5 @@
 
-#LS: LS.o Data_structure.o
-	#${CXX} -g $^ -o $@
-
-#SA: SA.o Data_structure.o
-	#${CXX} -g $^ -o $@
-
-TS: TS.o Data_structure.o
+SA: SA.o Data_structure.o
 	${CXX} -g $^ -o $@
 
 %.o: %.cpp

@@ -10,54 +10,51 @@ Result::~Result(){
 	vector<int>().swap(bins_weight);
 }
 
-void Result::create_result(bool flag, Result & res, const Data & data, int pos1, int pos2){
-	//FF
-	res.data = data;
+Result Result::create_result(const Data & data, int pos1, int pos2){
+	this->data = data;
 	for (int i = 0; i < data.n; ++i){
 		int j = 0;
-		for (; j < res.bins_count; ++j){
-			if (data.items[i] <= res.bins_weight[j]){
-				res.bins_weight[j] -= data.items[i];
-				res.items_order.push_back(data.items[i]);
-				if (flag){
-					swap_record[0] = pos2;
-					swap_record[1] = pos1;
-				}
+		for (; j < this->bins_count; ++j){
+			if (data.items[i] <= this->bins_weight[j]){
+				this->bins_weight[j] -= data.items[i];
+				this->items_order.push_back(data.items[i]);
+				swap_record[0] = pos2;
+				swap_record[1] = pos1;
 				break;	
 			}
 		}
 		//if no opened bin satisfies, allocate a new bin
-		if (j == res.bins_weight.size()){
-			res.bins_weight.push_back(data.c - data.items[i]);
-			++res.bins_count;
-			res.items_order.push_back(data.items[i]);
+		if (j == this->bins_weight.size()){
+			this->bins_weight.push_back(data.c - data.items[i]);
+			++this->bins_count;
+			this->items_order.push_back(data.items[i]);
 		}
 	}
-	return;
+	return *this;
 }
 
-void Result::create_random_result(Result & res, const Data & data){
-	res.data = data;
+Result Result::create_random_result(const Data & data){
+	this->data = data;
 	srand((unsigned)time(NULL));
 	for (int i = 0; i < data.n; ++i){
 		int j = 0;
-		for (; j < res.bins_count; ++j){
-			if (data.items[i] <= res.bins_weight[j]){
+		for (; j < this->bins_count; ++j){
+			if (data.items[i] <= this->bins_weight[j]){
 				if ((rand() % 100) / (double)100 > 0.7){
-					res.bins_weight[j] -= data.items[i];
-					res.items_order.push_back(data.items[i]);
+					this->bins_weight[j] -= data.items[i];
+					this->items_order.push_back(data.items[i]);
 					break;
 				}			
 			}
 		}
 		//if no opened bin satisfies, allocate a new bin
-		if (j == res.bins_weight.size()){
-			res.bins_weight.push_back(data.c - data.items[i]);
-			++res.bins_count;
-			res.items_order.push_back(data.items[i]);
+		if (j == this->bins_weight.size()){
+			this->bins_weight.push_back(data.c - data.items[i]);
+			++this->bins_count;
+			this->items_order.push_back(data.items[i]);
 		}
 	}
-	return;
+	return *this;
 }
 
 bool Result::better(const Result & res){
@@ -89,6 +86,14 @@ bool Result::is_null(){
 	return this->bins_count == 0;
 }
 
-int Result::get_bins_count(){
+int Result::get_bins_count() const{
 	return bins_count;
+}
+
+vector<int> Result::get_bins_weight() const{
+	return bins_weight;
+}
+
+vector<int> Result::get_items_order() const{
+	return items_order;
 }

@@ -1,11 +1,9 @@
 
-FF = ff
-
-$(FF): ff.o Data_structure.o
+FF: FF.o 
 	${CXX} -g $^ -o $@
 
 %.o: %.cpp
 	${CXX} -g -o $@ -c $^
 
 clean :
-	rm -f $(FF) *.o 
+	rm -f FF *.o 

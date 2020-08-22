@@ -12,14 +12,14 @@ void swap_items_and_get_order(int pos1, int pos2, vector<int>& origin_order){
 	return;
 }
 
-deque<Result> get_neighbor_range(vector<int> items_order){
+deque<Result> get_neighbor_range(const vector<int>& items_order){
 	deque<Result> neighbor_range;
 	for (int i = 0; i < items_order.size(); ++i){
 		for (int j = i + 1; j < items_order.size(); ++j){
 			Result res;
 			vector<int> origin_order = items_order;
 			swap_items_and_get_order(i, j, origin_order);
-			res.create_result(true, res, Data(n, c, origin_order), i, j);
+			res.create_result(Data(n, c, origin_order), i, j);
 			neighbor_range.push_back(res);
 		}
 	}
@@ -39,7 +39,7 @@ int find_in_tabu_list(const deque<vector<int>> & tabu_list, const Result & res){
 int tabu_search(){
 	Data data(n, c, items);
 	Result current;
-	current.create_random_result(current, data);
+	current.create_random_result(data);
 	cout << "Random_initial_solution: " << current.get_bins_count() << endl;
 
 	int tabu_tenure = (int)sqrt(n*(n-1)/2);
@@ -50,7 +50,7 @@ int tabu_search(){
 	int loop = LOOP_TIMES;
 	srand((unsigned)time(NULL));
 	while (loop--){
-		deque<Result> neighbor_range = get_neighbor_range(current.items_order);
+		deque<Result> neighbor_range = get_neighbor_range(current.get_items_order());
 		vector<Result> candidate_set;
 
 		for (int i = 0; i < neighbor_range.size(); ++i){			
@@ -69,7 +69,7 @@ int tabu_search(){
 		}
 
 		if (find_in_tabu_list(tabu_list, best_candidate) == tabu_list.size()//not in tabu_list
-			|| (find_in_tabu_list(tabu_list, best_candidate) != tabu_list.size() && best_candidate.better(best))//in tabu_list //not sure
+			|| (find_in_tabu_list(tabu_list, best_candidate) != tabu_list.size() && best_candidate.better(best))//in tabu_list
 			|| best_non_tabu_candidate.is_null())
 		{
 			current = best_candidate;

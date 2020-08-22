@@ -25,20 +25,22 @@ class Result{
 public:
 	Result();
 	~Result();
-	void create_result(bool flag, Result & res, const Data & data, int pos1, int pos2);
-	void create_random_result(Result & res, const Data & data);
+	Result create_result(const Data & data, int pos1, int pos2);
+	Result create_random_result(const Data & data);
 	bool is_null();
 	bool better(const Result & res);
 	Result& operator = (const Result & res);
-	int get_bins_count();
+	int get_bins_count() const;
+	vector<int> get_bins_weight() const;
+	vector<int> get_items_order() const;
 
-	vector<int> items_order;
+	int swap_record[2];
 
 private:
 	Data data;
 	int bins_count;
 	vector<int> bins_weight;
-	int swap_record[2];
+	vector<int> items_order;
 };
 
 #endif

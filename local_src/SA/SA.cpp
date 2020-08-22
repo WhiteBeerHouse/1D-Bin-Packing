@@ -1,23 +1,36 @@
 #include "Data_structure.h"
-#include <cmath>
 
 #define k 0.01
 #define r 0.97
 #define T 500
-#define T_MIN 1
-#define L 100
-#define SWAP_TIMES 20
-#define CONDITION 200
+#define T_MIN 0.1
+#define STEP 10000
+#define ITERATION 2000
 
 vector<int> items;
 int n, c;
 
-double difference_calculator(Result New, Result Old){
-	if (New.bins_count != Old.bins_count)	
-		return New.bins_count - Old.bins_count;
+void swap_items_and_get_order(int pos1, int pos2, vector<int>& origin_order){
+	int temp = origin_order[pos1];
+	origin_order[pos1] = origin_order[pos2];
+	origin_order[pos2] = temp;
+	return;
+}
 
-	vector<int> bins1 = New.bins_weight;
-	vector<int> bins2 = Old.bins_weight;
+Result get_random_neighbor(int pos1, int pos2, const vector<int> & items_order){
+	Result res;
+	vector<int> order = items_order;
+	swap_items_and_get_order(pos1, pos2, order);
+	res.create_result(Data(n, c, order), pos1, pos2);
+	return res;
+}
+
+double difference_calculator(const Result & New, const Result & Old){
+	if (New.get_bins_count() != Old.get_bins_count())	
+		return New.get_bins_count() - Old.get_bins_count();
+
+	vector<int> bins1 = New.get_bins_weight();
+	vector<int> bins2 = Old.get_bins_weight();
 	sort(bins1.begin(), bins1.end());
 	sort(bins2.begin(), bins2.end());
 
@@ -33,26 +46,20 @@ double difference_calculator(Result New, Result Old){
 int simulated_annealing(){
 	Data data(n, c, items);
 	Result current;
-	current.create_random_result(current, data);
-	cout << "random_FF: " << current.get_bins_count() << endl;
+	current.create_random_result(data);
+	cout << "Random_initial_solution: " << current.get_bins_count() << endl;
 
 	double current_T = T;
 	srand((unsigned)time(NULL));
-	int count = CONDITION;
+	int count = ITERATION;
 
 	while (current_T > T_MIN && count > 0){
-		Range neighbor_range;
-		do{
-			neighbor_range = current.get_neighbor_range_move(data);
-		} while(neighbor_range.neighbors.size() == 0);
-
-		for (int i = 0; i < L; ++i){
-			int random_index = rand() % (neighbor_range.neighbors.size());
-			Result neighbor = neighbor_range.neighbors[random_index];
+		for (int i = 0; i < STEP; ++i){
+			Result neighbor = get_random_neighbor(rand() % n, rand() % n, current.get_items_order());
 			double diff = difference_calculator(neighbor, current);
 
 			if (diff == 0)	--count;
-			else count = CONDITION;
+			else count = ITERATION;
 
 			if (diff < 0)
 				current = neighbor;
@@ -69,6 +76,10 @@ int simulated_annealing(){
 int main(int argc, char* argv[]) {
 	ifstream file;
 	file.open(argv[1]);
+	if (!file.is_open()){
+		perror("Error");
+		return(-1);
+	}
 	file >> n >> c;
 	items.resize(n);
 	for (int i = 0; i < n; ++i) {
@@ -77,7 +88,8 @@ int main(int argc, char* argv[]) {
 	file.close();
 
 	clock_t start = clock();
-	cout << simulated_annealing() << endl;
+	int solution = simulated_annealing();
+	cout << "Solution by simulated_annealing: " << solution << endl;
 	clock_t end = clock();
 	cout << fixed << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << endl;
 	return 0;
