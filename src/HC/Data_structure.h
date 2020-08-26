@@ -19,7 +19,6 @@ struct Data{
 	Data(){}
 	Data(int n0, int c0, vector<int> items0) : n(n0), c(c0), items(items0){}
 };
-class Result;
 
 class Result{
 public:
